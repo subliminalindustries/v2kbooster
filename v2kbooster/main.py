@@ -95,7 +95,7 @@ def process_file(filename: str,
     print(f'> processing "{filename}"..')
 
     harmonics = list(np.arange(1, len(weights)+1))
-    harmonic_weights = ', '.join(list(map(lambda x: f'{x[0]}={x[1]}', zip(harmonics, weights))))
+    harmonic_weights = ', '.join(list(map(lambda w: f'{w[0]}={w[1]}', zip(harmonics, weights))))
 
     print(f'harmonic weights: {harmonic_weights}')
     print(f'fft bins: {nfft}')
@@ -105,7 +105,7 @@ def process_file(filename: str,
 
     meter = pyloudnorm.Meter(fs)
     loudness = meter.integrated_loudness(signal)
-    signal = pyloudnorm.normalize.loudness(signal, loudness, -10.0)
+    signal = pyloudnorm.normalize.loudness(signal, loudness, -30.0)
     signal = np.nan_to_num(signal, posinf=1., neginf=-1.)
 
     samples = len(signal)
@@ -135,7 +135,7 @@ def process_file(filename: str,
     meter = pyloudnorm.Meter(fs, 'DeMan')
     meter._filters.__setitem__('hp_filter', hp_filter)
     loudness = meter.integrated_loudness(enhanced)
-    enhanced = pyloudnorm.normalize.loudness(enhanced, loudness, -10.0)
+    enhanced = pyloudnorm.normalize.loudness(enhanced, loudness, -20.0)
 
     audiofile.write(file=new_filename, signal=enhanced, sampling_rate=fs)
 
