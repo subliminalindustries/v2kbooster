@@ -38,25 +38,6 @@ def hilbert_frequency_rms(data: np.ndarray, fs: int, window_size: int = 16) -> n
     return 1 - savgol_filter(np.array(mf), w, 1)
 
 
-def process_file(filename: str, weights: list, nfft: int, hw: float) -> (str, str):
-    if '-enhanced' in filename:
-        return None
-
-    path, ext = os.path.splitext(filename)
-    dir_name = os.path.dirname(path)
-    new_filename = os.path.join(dir_name, f'{os.path.basename(path)}-enhanced{ext}')
-
-    if os.path.isfile(new_filename):
-        os.remove(new_filename)
-
-    signal, fs = load_file(filename, mono=True)
-    enhanced = minmax_scale(enhance_salient(signal, fs, weights, nfft, hw), (-1., 1.))
-
-    audiofile.write(file=new_filename, signal=enhanced, sampling_rate=fs)
-
-    return filename, new_filename
-
-
 def enhance_salient(data: np.ndarray,
                     fs: int,
                     weights: list,
@@ -68,6 +49,10 @@ def enhance_salient(data: np.ndarray,
 
     print(f'harmonic weights: {harmonic_weights}')
     print(f'fft bins: {nfft}')
+
+    meter = pyloudnorm.Meter(fs)
+    loudness = meter.integrated_loudness(data)
+    data = pyloudnorm.normalize.loudness(data, loudness, -1.0)
 
     spectrum = np.abs(librosa.stft(data, n_fft=nfft))
 
@@ -84,34 +69,50 @@ def enhance_salient(data: np.ndarray,
 
     signal = interpolate(signal, data.size) * envelope
 
-    hp_filter = pyloudnorm.IIRfilter(0.0, 0.5, 80.0, fs, 'high_pass')
+    hp_filter = pyloudnorm.IIRfilter(0.0, 0.7, 80.0, fs, 'high_pass')
     meter = pyloudnorm.Meter(fs, 'DeMan')
     meter._filters.__setitem__('hp_filter', hp_filter)
     loudness = meter.integrated_loudness(signal)
-    signal = pyloudnorm.normalize.loudness(signal, loudness, -6.0)
+    signal = pyloudnorm.normalize.loudness(signal, loudness, -1.0)
 
     return signal
 
 
-def process(pattern: str, weights: list = None, nfft: int = 8192, envelope_weight: float = 1.):
+def process_file(filename: str, weights: list, nfft: int, hw: float, overwrite: bool) -> None:
+    if filename.find('-enhanced') != -1 and not overwrite:
+        return None
+
+    print(f'> processing "{filename}"..')
+
+    path, ext = os.path.splitext(filename)
+    dir_name = os.readlink(os.path.dirname(path))
+    new_filename = os.path.join(dir_name, f'{os.path.basename(path)}-enhanced{ext}')
+
+
+    if os.path.isfile(new_filename):
+        os.remove(new_filename)
+
+    signal, fs = load_file(filename, mono=True)
+    enhanced = minmax_scale(enhance_salient(signal, fs, weights, nfft, hw), (-1., 1.))
+
+    audiofile.write(file=new_filename, signal=enhanced, sampling_rate=fs)
+
+    print(f'> wrote "{new_filename}"\n')
+
+
+def process(pattern: str, weights: list = None, nfft: int = 8192, envelope_weight: float = 1., overwrite: bool = False):
     if weights is None:
         weights = [1., .5, .33, .25, .165]
     elif type(weights) is list:
         weights = list(map(lambda x: min(1., float(x)), weights))
 
-    files = sorted(glob(pattern))
+    files = sorted(glob(pattern, recursive=True))
     if len(files):
         print(f'processing {len(files)} files..')
 
         for file in files:
-            if 'HearBoost' in file:
-                continue
             try:
-                print(f'> processing "{file}"..')
-                result = process_file(file, weights, nfft, envelope_weight)
-                if result is not None:
-                    old, new = result
-                    print(f'> wrote "{new}"\n')
+                process_file(file, weights, nfft, envelope_weight, overwrite)
             except Exception as e:
                 print(e)
 
