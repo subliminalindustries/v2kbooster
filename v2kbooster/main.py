@@ -5,11 +5,14 @@ import librosa
 import numpy as np
 import os
 import pyloudnorm
+import warnings
 
 from glob import glob
 from scipy.signal import hilbert, savgol_filter
 from sklearn.preprocessing import minmax_scale
 from soundfile import LibsndfileError
+
+warnings.filterwarnings('ignore', category=UserWarning)
 
 
 def load_file(filename: str, mono: bool = False) -> (np.ndarray, int):
