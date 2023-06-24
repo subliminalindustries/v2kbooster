@@ -33,9 +33,11 @@ You can additionally specify the weights for the harmonics:
 ./v2kbooster.py -w 1. .7 .4 .15 -f 4096 /path/to/files/\*\*/\*.wav
 ```
 
+Adjusting the harmonic weights and the number of FFT bins can yield very different results. If the result is not satisfactory, you can use the loudness normalization plugin in Audacity using the “perceived loudness” setting at -6.0 LUFS on the files you want to process beforehand and see if that works.
+
 ### Example
 
-The input file below is an example of a recording of the reflected soundwaves caused by the Microwave Auditory Effect, also known as the microwave-induced thermoacoustic effect. The output file shows the effect of this program.
+The input file below is an example of a recording of the reflected sound waves caused by the Microwave Auditory Effect, also known as the microwave-induced thermoacoustic effect. The output file shows the effect of this program.
 
 **input:** ![original.mp4](https://raw.githubusercontent.com/subliminalindustries/v2kbooster/main/.github/original.mp4)
 
