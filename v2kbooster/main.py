@@ -62,8 +62,7 @@ def enhance_salient(data: np.ndarray,
                     weights: list,
                     nfft: int,
                     hw: float) -> np.ndarray:
-    harmonics = list(np.arange(1, len(weights)))
-    weights = weights[:len(harmonics)]
+    harmonics = list(np.arange(1, len(weights)+1))
 
     print(f'enhancing salience for harmonics {repr(harmonics)} with weights {repr(weights)}..')
 
@@ -94,6 +93,8 @@ def enhance_salient(data: np.ndarray,
 def process(pattern: str, weights: list = None, nfft: int = 8192, envelope_weight: float = 1.):
     if weights is None:
         weights = [1., .5, .33, .25, .165]
+    elif type(weights) is list:
+        weights = list(map(lambda x: min(1., float(x)), weights))
 
     files = sorted(glob(pattern))
     if len(files):
