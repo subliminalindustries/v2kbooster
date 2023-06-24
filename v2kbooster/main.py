@@ -160,6 +160,7 @@ def process(pattern: str,
     done_work = False
 
     for file in files:
+        # noinspection PyBroadException
         try:
             if process_file(file, weights, nfft, envelope_weight, overwrite) and done_work is False:
                 done_work = True
