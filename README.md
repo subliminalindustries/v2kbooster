@@ -21,19 +21,25 @@ v2kbooster accepts a glob pattern:
 
 Note the escaped `*` characters, this is to prevent shell-expansion of the pattern before it is fed into the program.
 
-You can specify the number of FFT bins to use:
+You can specify the number of FFT bins to use with `-f` / `--fftn`:
 
 ```
 ./v2kbooster.py -f 2048 /path/to/files/\*\*/\*.wav
 ```
 
-You can additionally specify the weights for the harmonics:
+You can additionally specify the weights for the harmonics with `-w` / `--weights`:
 
 ```
 ./v2kbooster.py -w 1. .7 .4 .15 -f 4096 /path/to/files/\*\*/\*.wav
 ```
 
 Adjusting the harmonic weights and the number of FFT bins can yield very different results. If the result is not satisfactory, you can use the loudness normalization plugin in Audacity using the “perceived loudness” setting at -6.0 LUFS on the files you want to process beforehand and see if that works.
+
+Lastly you can specify whether to overwrite existing files with `-o` / `--overwrite`:
+
+```
+./v2kbooster.py -o -w 1. .7 .4 .15 -f 4096 /path/to/files/\*\*/\*.wav
+```
 
 ### Example
 
