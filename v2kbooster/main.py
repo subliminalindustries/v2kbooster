@@ -64,7 +64,10 @@ def enhance_salient(data: np.ndarray,
                     hw: float) -> np.ndarray:
     harmonics = list(np.arange(1, len(weights)+1))
 
-    print(f'enhancing salience for harmonics {repr(harmonics)} with weights {repr(weights)}..')
+    harmonic_weights = ', '.join(list(map(lambda x: f'{x[0]}={x[1]}', zip(harmonics, weights))))
+
+    print(f'harmonic weights: {harmonic_weights}')
+    print(f'fft bins: {nfft}')
 
     spectrum = np.abs(librosa.stft(data, n_fft=nfft))
 
