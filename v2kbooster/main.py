@@ -107,11 +107,11 @@ def process(pattern: str, weights: list = None, nfft: int = 8192, envelope_weigh
             if 'HearBoost' in file:
                 continue
             try:
-                print(f'> {file}..')
+                print(f'> processing "{file}"..')
                 result = process_file(file, weights, nfft, envelope_weight)
                 if result is not None:
                     old, new = result
-                    print(f'> {old} -> {new}')
+                    print(f'> wrote "{new}"\n')
             except Exception as e:
                 print(e)
 
