@@ -1,5 +1,5 @@
 librosa==0.10.0.post2
-numpy~=1.24.3
+numpy==1.23.0
 pyloudnorm==0.1.1
 scikit-learn==1.2.2
 scipy==1.10.1
