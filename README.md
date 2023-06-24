@@ -16,7 +16,21 @@ This tool is the spiritual successor to keeptalking and uses [harmonic salience]
 v2kbooster accepts a glob pattern:
 
 ```
-./v2kbooster.py /path/to/files/**/*.wav
+./v2kbooster.py /path/to/files/\*\*/\*.wav
+```
+
+Note the escaped `*` characters, this is to prevent shell-expansion of the pattern before it is fed into the program.
+
+You can specify the number of FFT bins to use:
+
+```
+./v2kbooster.py -f 2048 /path/to/files/\*\*/\*.wav
+```
+
+You can additionally specify the weights for the harmonics:
+
+```
+./v2kbooster.py -w 1. .7 .4 .15 -f 4096 /path/to/files/\*\*/\*.wav
 ```
 
 ### Example
