@@ -78,19 +78,23 @@ def enhance_salient(data: np.ndarray,
     return signal
 
 
-def process_file(filename: str, weights: list, nfft: int, hw: float, overwrite: bool) -> None:
-    if filename.find('-enhanced') != -1 and not overwrite:
-        return None
-
-    print(f'> processing "{filename}"..')
+def process_file(filename: str, weights: list, nfft: int, hw: float, overwrite: bool) -> bool:
+    if filename.find('-enhanced.wav') != -1:
+        return False
 
     path, ext = os.path.splitext(filename)
-    dir_name = os.readlink(os.path.dirname(path))
+    dir_name = os.path.dirname(path)
+    if os.path.islink(dir_name):
+        dir_name = os.path.realpath(dir_name)
     new_filename = os.path.join(dir_name, f'{os.path.basename(path)}-enhanced{ext}')
 
+    if os.path.isfile(new_filename) or os.path.islink(new_filename):
+        if overwrite:
+            os.remove(new_filename)
+        else:
+            return False
 
-    if os.path.isfile(new_filename):
-        os.remove(new_filename)
+    print(f'> processing "{filename}"..')
 
     signal, fs = load_file(filename, mono=True)
     enhanced = minmax_scale(enhance_salient(signal, fs, weights, nfft, hw), (-1., 1.))
@@ -98,6 +102,8 @@ def process_file(filename: str, weights: list, nfft: int, hw: float, overwrite: 
     audiofile.write(file=new_filename, signal=enhanced, sampling_rate=fs)
 
     print(f'> wrote "{new_filename}"\n')
+
+    return True
 
 
 def process(pattern: str, weights: list = None, nfft: int = 8192, envelope_weight: float = 1., overwrite: bool = False):
@@ -108,14 +114,20 @@ def process(pattern: str, weights: list = None, nfft: int = 8192, envelope_weigh
 
     files = sorted(glob(pattern, recursive=True))
     if len(files):
-        print(f'processing {len(files)} files..')
+        print(f'found {len(files)} files.')
+
+        done_work = False
 
         for file in files:
             try:
-                process_file(file, weights, nfft, envelope_weight, overwrite)
+                if process_file(file, weights, nfft, envelope_weight, overwrite) and done_work is False:
+                    done_work = True
             except Exception as e:
                 print(e)
 
-        print('done.')
+        if done_work:
+            print('done.')
+        else:
+            print('nothing to do.')
     else:
         print('no files to process')

@@ -7,7 +7,7 @@ import v2kbooster
 parser = argparse.ArgumentParser(prog='v2kbooster',
                                  description='Boost v2k recordings to an intelligible level')
 
-parser.add_argument('-o', '--overwrite', required=False, type=bool,
+parser.add_argument('-o', '--overwrite', required=False, action='store_true',
                     help='Whether to overwrite existing files (default: False)', default=False)
 parser.add_argument('-f', '--fftn', required=False, type=int, help='Number of FFT bins (default: 8192)', default=8192)
 parser.add_argument('-w', '--weights', required=False, type=str, nargs='+',
