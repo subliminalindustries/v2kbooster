@@ -7,7 +7,7 @@
 
 ## Methodology
 
-After a failed attempt (see: keeptalking), research continued and a working method was found.
+After a failed attempt (see: [keeptalking](https://github.com/subliminalindustries/keeptalking)) research continued and a working method was found.
 
 This tool is the spiritual successor to keeptalking and uses [harmonic salience](https://librosa.org/doc/latest/generated/librosa.salience.html) and the smoothed derivative of the instantaneous frequency calculated from the [Hilbert transform](https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.hilbert.html) to make v2k recordings audible and intelligible.
 
