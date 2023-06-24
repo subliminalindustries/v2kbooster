@@ -11,6 +11,14 @@ After a failed attempt (see: [keeptalking](https://github.com/subliminalindustri
 
 This tool is the spiritual successor to keeptalking and uses [harmonic salience](https://librosa.org/doc/latest/generated/librosa.salience.html) and the smoothed derivative of the instantaneous frequency calculated from the [Hilbert transform](https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.hilbert.html) to make v2k recordings audible and intelligible.
 
+### Usage
+
+v2kbooster accepts a glob pattern:
+
+```
+./v2kbooster.py /path/to/files/**/*.wav
+```
+
 ### Example
 
 The input file below is an example of a recording of the reflected soundwaves caused by the Microwave Auditory Effect, also known as the microwave-induced thermoacoustic effect. The output file shows the effect of this program.
