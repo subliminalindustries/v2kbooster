@@ -155,7 +155,7 @@ def process(pattern: str,
         weights = list(map(lambda x: min(1., float(x)), weights))
 
     files = sorted(glob(pattern, recursive=True))
-    print(f'found {len(files)} files.\n{"-" * 80}')
+    print(f'found {len(files)} files.')
 
     done_work = False
 
@@ -167,6 +167,6 @@ def process(pattern: str,
             print(''.join(traceback.format_exception(sys.exc_info()[0], sys.exc_info()[1], sys.exc_info()[2])))
 
     if done_work:
-        print('done.')
+        print('done.\n')
     else:
-        print('nothing to do.')
+        print('nothing to do.\n')
